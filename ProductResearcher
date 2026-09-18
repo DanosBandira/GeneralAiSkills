@@ -82,7 +82,7 @@ State the review count and number of sources after the verdict, e.g.
 "Good (4.4 — 3 sources, 180 reviews)". "Unknown" is a legitimate outcome and must
 NOT be a reason to drop a product from the list.
 
-PHASE 5 — VALUE-FOR-MONEY SCORE (1–10)
+PHASE 5 — SCORE (1–10)
 Give each product a score from 1 to 10 for value for money, where 10 = exceptional
 value and 1 = clearly overpriced for what you get. The score is relative within
 this list, not absolute: the most expensive product can well score an 8 if the
@@ -112,7 +112,7 @@ OUTPUT
 2) The line with the chosen specs + reason (from phase 1B).
 3) Main table, sorted by [price ascending]:
 
-| # | Brand | Model | Segment (A–F) | Lowest price | Seller + date | Price spread | [spec 1] | [spec 2] | [spec 3] | [spec 4] | Warranty | Reviews | VFM score | Score justification | Sources |
+| # | Brand | Model | Segment (A–F) | Lowest price | Seller + date | Price spread | [spec 1] | [spec 2] | [spec 3] | [spec 4] | Warranty | Reviews | Score | Score justification | Sources |
 
 4) The same main table again, as a fully standalone HTML file with filtering.
    Requirements:
@@ -122,23 +122,39 @@ OUTPUT
    - Vanilla HTML/CSS/JS only, no frameworks, no build step.
    - The data sits as a JS array (or as HTML rows) inside the file; nothing is
      loaded via fetch or XHR.
-   - Filters above the table:
-       * free text search field covering all columns
-       * dropdown filter on Brand
-       * dropdown filter on Segment (A–F)
-       * dropdown filter on review verdict (Good/Average/Poor/Unknown)
-       * minimum and maximum price (numeric fields)
-       * minimum VFM score (slider or numeric field)
-     Filters apply cumulatively and update the table immediately on input.
+   - Filters above the table: EVERY column gets its own filter control, generated
+     from the column's data type. No column is left unfiltered, including the
+     specs chosen in phase 1B.
+       * Numeric columns (price, Score, and any spec with a numeric value such as
+         noise level, weight, capacity, power draw): a dual range slider with a
+         minimum and maximum handle, plus numeric input fields showing the current
+         bounds. Initialise the range to the actual min and max present in the data.
+       * Columns with a limited set of repeating values (brand, segment, review
+         verdict, warranty): a dropdown, or a multi-select when picking more than
+         one value at once is useful.
+       * Free-text columns (model, seller, justification, sources): a text input
+         that filters on substring, case-insensitive.
+       * Boolean or yes/no columns: a three-state control — all / yes / no.
+     Rules for the numeric filters:
+       - Strip the unit from the value for comparison, but keep it visible in the
+         cell and in the slider labels.
+       - Rows whose value is "unknown" or "⚠" are excluded from numeric range
+         comparison; add a checkbox per numeric filter labelled "include unknown"
+         (on by default) so those rows are not silently lost.
+       - If lower is better for a spec (noise, weight, power draw), say so in the
+         filter label, e.g. "Noise dB(A) — lower is better".
+     Keep the filter panel compact: group the controls in a grid above the table
+     and make the panel collapsible.
+     All filters apply cumulatively and update the table immediately on input.
    - Sorting by clicking a column header, toggling ascending/descending. Price and
-     VFM score sort numerically, not alphabetically.
+     Score sort numerically, not alphabetically.
    - A counter showing how many of how many rows are visible, plus a
      "Clear filters" button.
    - Readable, sober styling: sticky column headers, alternating row colours,
      horizontally scrollable when there are many columns, colour coding on the
      review verdict (green/orange/red/grey).
-   - The VFM score justification and the sources may go in a tooltip or a
-     collapsible cell, to keep the table readable.
+   - The score justification and the sources may go in a tooltip or a collapsible
+     cell, to keep the table readable.
    - Deliver the HTML as a downloadable file or in a single code block, ready to
      save as e.g. product-comparison.html.
 
