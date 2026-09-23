@@ -84,6 +84,18 @@ express: reasoning, context, history, and deliberately accepted trade-offs.
   contract: parameters, return value and errors. They are allowed and are not
   "what" comments in the sense of this rule.
 
+### File and class headers
+
+Every file or class starts with a short header comment that explains:
+
+- **What** it is responsible for, in a few sentences.
+- **How** it is used: its role in the larger system and how other code is
+  expected to use it (for example: which method to call, what to set up first).
+
+This is an overview for someone opening the file for the first time. It is
+allowed and is not a "what" comment in the sense of this rule. Keep it short;
+details belong in the code and in the method names.
+
 ## Rule 4: Prefer composition over inheritance
 
 **Rule.** Build larger behavior out of small, independent components that work
